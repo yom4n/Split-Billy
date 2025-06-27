@@ -8,7 +8,7 @@ interface GeminiResponse {
   itemizedCosts?: { person: string; item: string; cost: number }[];
 }
 
-export const processAudioWithGemini = async (audioBlob: Blob, apiKey: string, isEqualSplit: boolean = true): Promise<GeminiResponse> => {
+export const processAudioWithGemini = async (audioBlob: Blob, apiKey: string): Promise<GeminiResponse> => {
   if (!apiKey) {
     throw new Error('Gemini API key is required');
   }
@@ -21,14 +21,12 @@ export const processAudioWithGemini = async (audioBlob: Blob, apiKey: string, is
     
     console.log('Converting audio to text and processing...');
 
-    const prompt = isEqualSplit ? `
-    Analyze this audio recording and extract the following information about a bill/expense:
-    1. The item or service that was purchased
-    2. The amount paid (extract just the number)
-    3. Who paid for it
-    4. Who it was shared with (list of names)
+    const prompt = `
+    Analyze this audio recording and determine if it describes an equal split or unequal split bill, then extract the appropriate information:
 
-    Please respond in this exact JSON format:
+    FOR EQUAL SPLIT (when people share items equally):
+    - Example: "John paid 250 rupees for pizza and it was shared between Alice, Bob, Charlie"
+    - Response format:
     {
       "item": "name of the item",
       "amount": numeric_amount,
@@ -37,18 +35,9 @@ export const processAudioWithGemini = async (audioBlob: Blob, apiKey: string, is
       "isEqualSplit": true
     }
 
-    The audio might say something like "John paid 250 rupees for pizza and it was shared between Alice, Bob, Charlie"
-    Extract the item (pizza), amount (250), paidBy (John), and sharedWith (Alice, Bob, Charlie).
-    
-    Make sure to return valid JSON only, no additional text.
-    ` : `
-    Analyze this audio recording and extract information about an unequal bill split with itemized costs:
-    1. The main category/item that was purchased
-    2. The total amount paid
-    3. Who paid for it
-    4. Individual items and their costs for each person
-
-    Please respond in this exact JSON format:
+    FOR UNEQUAL SPLIT (when specific items/costs are mentioned for individuals):
+    - Example: "Aryan paid 60rs for drinks which had lemon drink for arun which costed 10rs and a soda for mohit which costed 20rs and a mojito for gurjot which costed 30rs"
+    - Response format:
     {
       "item": "main category name",
       "amount": total_numeric_amount,
@@ -61,10 +50,14 @@ export const processAudioWithGemini = async (audioBlob: Blob, apiKey: string, is
       ]
     }
 
-    The audio might say something like "Aryan paid 60rs for drinks which had lemon drink for arun which costed 10rs and a soda for mohit which costed 20rs and a mojito for gurjot which costed 30rs"
-    Extract the main item (drinks), total amount (60), paidBy (Aryan), and itemizedCosts with each person's specific item and cost.
-    
-    Make sure to return valid JSON only, no additional text.
+    INSTRUCTIONS:
+    1. First determine if this is an equal split (people sharing equally) or unequal split (specific items/costs mentioned)
+    2. Extract the information according to the appropriate format above
+    3. For equal splits, list all people who will share the cost in "sharedWith"
+    4. For unequal splits, list individual items and costs in "itemizedCosts"
+    5. Return ONLY valid JSON, no additional text
+
+    Analyze the audio and respond with the appropriate JSON format.
     `;
 
     const requestBody = {
@@ -139,7 +132,7 @@ export const processAudioWithGemini = async (audioBlob: Blob, apiKey: string, is
         amount: 0,
         paidBy: "Unknown",
         sharedWith: [],
-        isEqualSplit: isEqualSplit
+        isEqualSplit: true
       };
     }
     

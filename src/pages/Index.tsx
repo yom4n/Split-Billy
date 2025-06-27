@@ -3,13 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Mic, Plus, Calculator, Key, Eye, EyeOff, Receipt } from 'lucide-react';
-import VoiceRecorder from '@/components/VoiceRecorder';
+import { Calculator, Key, Eye, EyeOff, Mic } from 'lucide-react';
+import UnifiedVoiceRecorder from '@/components/UnifiedVoiceRecorder';
 import BillItem from '@/components/BillItem';
 import BillConfirmation from '@/components/BillConfirmation';
 import PersonCard from '@/components/PersonCard';
 import SplitCalculation from '@/components/SplitCalculation';
-import UnequalVoiceRecorder from '@/components/UnequalVoiceRecorder';
 import ItemizedBillItem from '@/components/ItemizedBillItem';
 import { processAudioWithGemini } from '@/utils/geminiProcessor';
 import { useToast } from '@/hooks/use-toast';
@@ -40,8 +39,6 @@ const Index = () => {
   const [showApiKey, setShowApiKey] = useState(false);
   const [pendingBillItem, setPendingBillItem] = useState<BillItemData | null>(null);
   const [pendingItemizedBillItem, setPendingItemizedBillItem] = useState<ItemizedBillItemData | null>(null);
-  const [isRecordingEqual, setIsRecordingEqual] = useState(false);
-  const [isRecordingUnequal, setIsRecordingUnequal] = useState(false);
   const { toast } = useToast();
 
   // Load data from localStorage on component mount
@@ -95,7 +92,7 @@ const Index = () => {
     }
   };
 
-  const handleAudioProcessed = async (audioBlob: Blob, isEqualSplit: boolean = true) => {
+  const handleAudioProcessed = async (audioBlob: Blob) => {
     if (!geminiApiKey.trim()) {
       toast({
         title: "API Key Required",
@@ -108,10 +105,10 @@ const Index = () => {
     setIsProcessing(true);
     try {
       console.log('Processing audio with Gemini AI...');
-      const result = await processAudioWithGemini(audioBlob, geminiApiKey, isEqualSplit);
+      const result = await processAudioWithGemini(audioBlob, geminiApiKey);
       console.log('Gemini AI result:', result);
       
-      if (isEqualSplit) {
+      if (result.isEqualSplit) {
         const newBillItem: BillItemData = {
           id: Date.now().toString(),
           item: result.item,
@@ -120,6 +117,10 @@ const Index = () => {
           sharedWith: result.sharedWith
         };
         setPendingBillItem(newBillItem);
+        toast({
+          title: "Equal Split Detected!",
+          description: "AI detected an equal split bill. Please confirm the details below.",
+        });
       } else {
         const newItemizedBillItem: ItemizedBillItemData = {
           id: Date.now().toString(),
@@ -129,12 +130,11 @@ const Index = () => {
           itemizedCosts: result.itemizedCosts || []
         };
         setPendingItemizedBillItem(newItemizedBillItem);
+        toast({
+          title: "Unequal Split Detected!",
+          description: "AI detected an itemized bill with unequal costs. Please confirm the details below.",
+        });
       }
-
-      toast({
-        title: "Audio Processed Successfully!",
-        description: "Please confirm the bill details below.",
-      });
     } catch (error) {
       console.error('Error processing audio:', error);
       toast({
@@ -144,8 +144,6 @@ const Index = () => {
       });
     } finally {
       setIsProcessing(false);
-      setIsRecordingEqual(false);
-      setIsRecordingUnequal(false);
     }
   };
 
@@ -303,52 +301,28 @@ const Index = () => {
           </CardContent>
         </Card>
 
-        {/* Voice Recording Sections */}
-        {(!isRecordingUnequal || isRecordingEqual) && (
-          <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
-            <CardHeader className="text-center">
-              <CardTitle className="flex items-center justify-center gap-2 text-2xl text-gray-800">
-                <Mic className="h-6 w-6 text-blue-600" />
-                Equal Split Recording
-              </CardTitle>
-              <p className="text-gray-600">
-                Say something like: "Aryan paid 250rs for margherita pizza and it was shared between Arun, Sahil, Mohit"
-              </p>
-            </CardHeader>
-            <CardContent>
-              <VoiceRecorder 
-                onAudioProcessed={(audioBlob) => {
-                  setIsRecordingEqual(true);
-                  handleAudioProcessed(audioBlob, true);
-                }}
-                isProcessing={isProcessing}
-              />
-            </CardContent>
-          </Card>
-        )}
-
-        {(!isRecordingEqual || isRecordingUnequal) && (
-          <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
-            <CardHeader className="text-center">
-              <CardTitle className="flex items-center justify-center gap-2 text-2xl text-gray-800">
-                <Receipt className="h-6 w-6 text-purple-600" />
-                Unequal Split Recording
-              </CardTitle>
-              <p className="text-gray-600">
-                Say something like: "Aryan paid 60rs for drinks which had lemon drink for arun which costed 10rs and a soda for mohit which costed 20rs and a mojito for gurjot which costed 30rs"
-              </p>
-            </CardHeader>
-            <CardContent>
-              <UnequalVoiceRecorder 
-                onAudioProcessed={(audioBlob) => {
-                  setIsRecordingUnequal(true);
-                  handleAudioProcessed(audioBlob, false);
-                }}
-                isProcessing={isProcessing}
-              />
-            </CardContent>
-          </Card>
-        )}
+        {/* Unified Voice Recording Section */}
+        <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+          <CardHeader className="text-center">
+            <CardTitle className="flex items-center justify-center gap-2 text-2xl text-gray-800">
+              <Mic className="h-6 w-6 text-blue-600" />
+              Smart Voice Recording
+            </CardTitle>
+            <div className="space-y-2 text-gray-600">
+              <p className="font-medium">AI will automatically detect if your bill is equally or unequally split!</p>
+              <div className="text-sm space-y-1">
+                <p><strong>Equal Split Example:</strong> "Aryan paid 250rs for margherita pizza and it was shared between Arun, Sahil, Mohit"</p>
+                <p><strong>Unequal Split Example:</strong> "Aryan paid 60rs for drinks which had lemon drink for arun which costed 10rs and a soda for mohit which costed 20rs and a mojito for gurjot which costed 30rs"</p>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <UnifiedVoiceRecorder 
+              onAudioProcessed={handleAudioProcessed}
+              isProcessing={isProcessing}
+            />
+          </CardContent>
+        </Card>
 
         {/* Bill Confirmations */}
         {pendingBillItem && (
@@ -417,7 +391,7 @@ const Index = () => {
           </div>
         )}
 
-        {/* Split Calculation - Update to pass itemized bills */}
+        {/* Split Calculation */}
         {(billItems.length > 0 || itemizedBillItems.length > 0) && (
           <SplitCalculation 
             billItems={billItems} 
@@ -434,7 +408,7 @@ const Index = () => {
               <p className="text-gray-500">
                 {!geminiApiKey.trim() 
                   ? "Enter your Gemini API key and start recording your first bill!"
-                  : "Choose between equal or unequal split and start recording!"
+                  : "Start recording and let AI automatically detect your bill type!"
                 }
               </p>
             </CardContent>
