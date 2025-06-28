@@ -1,5 +1,5 @@
 <h1 align="center" >Split Billy</h1>
-<img align="right" width="300" height="300" src="/public/favicon.ico" alt="A picture of a cat" />
+<div align="center"><img align="center" width="50" height="50" src="/public/favicon.ico" alt="A picture of a cat" /></div>
 
 <br clear="right">
 
