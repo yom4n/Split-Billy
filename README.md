@@ -1,73 +1,84 @@
-# Welcome to your Lovable project
+<h1 align="center" >Split Billy</h1>
 
-## Project info
 
-**URL**: https://lovable.dev/projects/b2338225-2ac4-47fc-aa28-8f140a40c5d7
+<br clear="right">
 
-## How can I edit this code?
+## 📍 Overview
 
-There are several ways of editing your application.
+<p>❯ Split Billy is a web application designed to simplify splitting bills among friends and family. Users can record their purchased items and the people they were shared with, making it easy to generate a bill. This feature is particularly useful for group outings, meals, or other shared expenses.</p>
 
-**Use Lovable**
+<br clear="right">
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/b2338225-2ac4-47fc-aa28-8f140a40c5d7) and start prompting.
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🛠️ Tech Used
 
-**Use your preferred IDE**
+<div align="left">
+	
+![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white) 
+![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![React Router](https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white)
+![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![Zod](https://img.shields.io/badge/zod-%233068b7.svg?style=for-the-badge&logo=zod&logoColor=white)
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+</div>
+<br clear="right">
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
-Follow these steps:
+## 👾 Features
 
+- Minimal steup
+- Voice Input for Easy Entry
+- Automated Bill Calculation and Splitting
+- Multiple Payment Options Available
+- Bill History and Tracking Records
+
+<br clear="right">
+
+
+## 🚀 Getting Started
+
+### ☑️ Prerequisites
+
+Before getting started with Split-Billy, ensure your runtime environment meets the following requirements:
+
+- **Programming Language:** TypeScript
+- **Package Manager:** Npm
+
+
+### ⚙️ Installation
+
+Install Split-Billy using one of the following methods:
+
+**Build from source:**
+
+1. Clone the Split-Billy repository:
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+❯ git clone https://github.com/yom4n/Split-Billy
 ```
 
-**Edit a file directly in GitHub**
+2. Navigate to the project directory:
+```sh
+❯ cd Split-Billy
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+3. Install the project dependencies:
 
-**Use GitHub Codespaces**
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+**Using `npm`** &nbsp; [<img align="center" src="https://img.shields.io/badge/npm-CB3837.svg?style={badge_style}&logo=npm&logoColor=white" />](https://www.npmjs.com/)
 
-## What technologies are used for this project?
+```sh
+❯ npm install
+```
 
-This project is built with:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
 
-## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/b2338225-2ac4-47fc-aa28-8f140a40c5d7) and click on Share -> Publish.
+### 🤖 Usage
+Run Split-Billy using the following command:
+**Using `npm`** &nbsp; [<img align="center" src="https://img.shields.io/badge/npm-CB3837.svg?style={badge_style}&logo=npm&logoColor=white" />](https://www.npmjs.com/)
 
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+```sh
+❯ npm run dev
+```
